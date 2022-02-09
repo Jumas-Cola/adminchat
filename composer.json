@@ -1,0 +1,33 @@
+{
+    "name": "laravel-admin-ext/adminchat",
+    "description": "Simple chat with admin",
+    "type": "library",
+    "keywords": ["laravel-admin", "extension"],
+    "homepage": "https://github.com/jumas-cola/adminchat",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jumas Cola",
+            "email": "kbbyfl91@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "encore/laravel-admin": "~1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JumasCola\\AdminChat\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JumasCola\\AdminChat\\AdminChatServiceProvider"
+            ]
+        }
+    }
+}
