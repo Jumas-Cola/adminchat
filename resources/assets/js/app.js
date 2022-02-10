@@ -15,11 +15,9 @@ var intervalID = setInterval(() => {
 }, 2000)
 
 function updateChatData(userId) {
-    const form = document.getElementById('message-form')
-    const data = new FormData(form)
     const messagesEl = document.getElementById("messages")
 
-    axios.get(`/admin/adminchat/ajax/${userId}`, data).then(resp => {
+    axios.get(`/admin/adminchat/ajax/${userId}`).then(resp => {
         let messages = resp.data.data
         messages.sort((a, b) => {return a.id - b.id})
 
