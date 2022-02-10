@@ -74,6 +74,10 @@ function findGetParameter(parameterName) {
 function sendMessage() {
     const path = document.location.pathname.split('/')
     const form = document.getElementById('message-form')
+    if ( !form.text.value ) {
+        alert('Text should not be empty!')
+        return
+    }
     const data = new FormData(form);
 
     axios.post(`/admin/adminchat/${path[path.length - 1]}`, data).then(resp => {
