@@ -1,10 +1,8 @@
-var sendEl = document.getElementById("send")
-if ( sendEl ) {
-    sendEl.addEventListener("click", sendMessage, false)
-}
+$('#send').click(sendMessage);
 
-var searchEl = document.getElementById("search")
-searchEl.addEventListener("click", search, false)
+$('#search').click(search);
+
+$('#txtSearch').keypress(search);
 
 clearInterval(intervalID);
 var intervalID = setInterval(() => {
