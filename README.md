@@ -37,6 +37,13 @@ Add your auth middleware to admin.php config file
 ],
 ```
 
+Add plugin routes to config/cors.php:
+
+```
+"paths" => ["adminchat/*", ...],
+
+```
+
 ## Routes
 
 ### API for user side
