@@ -9,11 +9,15 @@ class AdminChatMessage extends Model
 {
     use HasFactory;
 
-    public $fillable = [
-        'user_id',
-        'admin_id',
-        'from_user',
-        'text',
-        'file',
-    ];
+    public $fillable = ["user_id", "admin_id", "from_user", "text", "file"];
+
+    /**
+     * Unread messages
+     *
+     * @return void
+     */
+    public function scopeUnread($query, $from_user = true)
+    {
+        $query->where("from_user", $from_user)->whereNull("read_at");
+    }
 }

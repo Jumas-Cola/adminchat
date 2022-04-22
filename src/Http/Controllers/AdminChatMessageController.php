@@ -16,34 +16,33 @@ class AdminChatMessageController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $per_page = $request->get('per_page', 15);
+        $per_page = $request->get("per_page", 15);
 
-        $messages = AdminChatMessage::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
+        $messages = AdminChatMessage::where("user_id", $user->id)
+            ->orderBy("created_at", "desc")
             ->paginate($per_page);
 
         AdminChatMessage::where("user_id", $user->id)
-          ->where("from_user", false)
-          ->whereNull('read_at')
-          ->update(["read_at" => Carbon::now()]);
+            ->unread(false)
+            ->update(["read_at" => Carbon::now()]);
 
         return $messages;
     }
-    
+
     public function store(StoreAdminChatMessageRequest $request)
     {
         $user = $request->user();
 
         $data = [
-            'user_id' => $user->id,
-            'text' => $request->text,
-            'from_user' => 1,
+            "user_id" => $user->id,
+            "text" => $request->text,
+            "from_user" => 1,
         ];
 
-        File::ensureDirectoryExists(public_path('admin_chat_files'));
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $data['file'] = Storage::put('public/admin_chat_files', $file);
+        File::ensureDirectoryExists(public_path("admin_chat_files"));
+        if ($request->hasFile("file")) {
+            $file = $request->file("file");
+            $data["file"] = Storage::put("public/admin_chat_files", $file);
         }
 
         $message = AdminChatMessage::create($data);

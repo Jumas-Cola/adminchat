@@ -17,8 +17,7 @@ class AdminChatController extends Controller
 {
   public function index(Content $content)
   {
-    $user_ids = AdminChatMessage::where("from_user", true)
-      ->whereNull("read_at")
+    $user_ids = AdminChatMessage::unread()
       ->select("user_id")
       ->groupBy("user_id")
       ->get();
@@ -44,12 +43,10 @@ class AdminChatController extends Controller
     $messages = $messages->paginate(5);
 
     AdminChatMessage::where("user_id", $user->id)
-      ->where("from_user", true)
-      ->whereNull('read_at')
+      ->unread()
       ->update(["read_at" => Carbon::now()]);
 
-    $user_ids = AdminChatMessage::where("from_user", true)
-      ->whereNull("read_at")
+    $user_ids = AdminChatMessage::unread()
       ->select("user_id")
       ->groupBy("user_id")
       ->get();
@@ -88,8 +85,7 @@ class AdminChatController extends Controller
     $messages = $messages->paginate(5);
 
     AdminChatMessage::where("user_id", $user->id)
-      ->where("from_user", true)
-      ->whereNull('read_at')
+      ->unread()
       ->update(["read_at" => Carbon::now()]);
 
     return AdminChatMessageListResource::collection($messages);
@@ -112,8 +108,7 @@ class AdminChatController extends Controller
     $message = AdminChatMessage::create($data);
 
     AdminChatMessage::where("user_id", $user->id)
-      ->where("from_user", true)
-      ->whereNull('read_at')
+      ->unread()
       ->update(["read_at" => Carbon::now()]);
 
     return $message;
