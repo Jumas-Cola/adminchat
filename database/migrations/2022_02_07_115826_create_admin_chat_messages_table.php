@@ -24,7 +24,7 @@ class CreateAdminChatMessagesTable extends Migration
                                               ->cascadeOnUpdate()
                                               ->nullOnDelete();
             $table->boolean('from_user');
-            $table->timestamp('admin_read_at')->nullable();
+            $table->timestamp('read_at')->nullable();
             $table->text('text');
             $table->text('file')->nullable();
             $table->timestamps();

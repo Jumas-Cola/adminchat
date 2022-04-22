@@ -2,6 +2,7 @@
 
 namespace JumasCola\AdminChat\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\File;
@@ -20,6 +21,11 @@ class AdminChatMessageController extends Controller
         $messages = AdminChatMessage::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate($per_page);
+
+        AdminChatMessage::where("user_id", $user->id)
+          ->where("from_user", false)
+          ->whereNull('read_at')
+          ->update(["read_at" => Carbon::now()]);
 
         return $messages;
     }
