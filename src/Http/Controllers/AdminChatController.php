@@ -4,6 +4,7 @@ namespace JumasCola\AdminChat\Http\Controllers;
 
 use App\Models\User;
 use Carbon\Carbon;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ class AdminChatController extends Controller
 {
   public function index(Content $content)
   {
+    Admin::disablePjax();
+
     $user_ids = AdminChatMessage::unread()
       ->select("user_id")
       ->groupBy("user_id")
