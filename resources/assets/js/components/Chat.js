@@ -88,16 +88,16 @@ export default {
         <nav>
           <ul class="pagination">
             <li class="page-item">
-              <a class="page-link" @click="page = page > 1 ? page - 1 : 1; renewData()" aria-label="Previous">
+              <a class="page-link" @click="page = +page > 1 ? +page - 1 : 1; renewData()" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
               </a>
             </li>
-            <li v-for="link in links" class="page-item" :class="{ active: link.label == page }">
+            <li v-for="link in links" class="page-item" :class="{ active: +link.label == +page }">
                 <a class="page-link" @click="page=link.label; renewData()">{{ link.label }}</a>
             </li>
             <li class="page-item">
-              <a class="page-link" @click="page = page < meta.last_page ? page + 1 : page; renewData()" aria-label="Next">
+              <a class="page-link" @click="page = +page < meta.last_page ? +page + 1 : page; renewData()" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
               </a>
