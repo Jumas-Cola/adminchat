@@ -25,7 +25,8 @@ class StoreAdminChatMessageRequest extends FormRequest
     {
         return [
             'text' => 'max:65000',
-            'file' => 'file|mimes:jpg,bmp,png,pdf,jpeg,webp|max:10240',
+            "files.*" =>
+                "file|mimes:jpg,bmp,png,pdf,jpeg,webp,txt,doc,docx,xls,xls|max:40240",
         ];
     }
 }

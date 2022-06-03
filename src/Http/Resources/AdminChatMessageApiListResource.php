@@ -5,7 +5,7 @@ namespace JumasCola\AdminChat\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class AdminChatMessageListResource extends JsonResource
+class AdminChatMessageApiListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

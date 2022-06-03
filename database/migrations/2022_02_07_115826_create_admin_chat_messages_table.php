@@ -26,7 +26,6 @@ class CreateAdminChatMessagesTable extends Migration
             $table->boolean('from_user');
             $table->timestamp('read_at')->nullable();
             $table->text('text');
-            $table->text('file')->nullable();
             $table->timestamps();
         });
     }

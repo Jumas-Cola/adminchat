@@ -1,62 +1,62 @@
 export default {
-    data() {
-        return {
-            messages: [],
-            userId: 0,
-            page: 1,
-            meta: {},
-            links: [],
-        };
+  data() {
+    return {
+      messages: [],
+      userId: 0,
+      page: 1,
+      meta: {},
+      links: [],
+    };
+  },
+  methods: {
+    renewData() {
+      fetch(`/admin/adminchat/ajax/${this.userId}?page=${this.page}`).then(
+        async (resp) => {
+          const data = await resp.json();
+          let messages = data.data;
+
+          messages.sort((a, b) => {
+            return a.id - b.id;
+          });
+
+          this.messages = messages;
+          this.meta = data.meta;
+          let links = data.meta.links;
+          links.shift();
+          links.pop();
+          this.links = links;
+        }
+      );
     },
-    methods: {
-        renewData() {
-            fetch(
-                `/admin/adminchat/ajax/${this.userId}?page=${this.page}`
-            ).then(async (resp) => {
-                const data = await resp.json();
-                let messages = data.data;
-
-                messages.sort((a, b) => {
-                    return a.id - b.id;
-                });
-
-                this.messages = messages;
-                this.meta = data.meta;
-                let links = data.meta.links;
-                links.shift();
-                links.pop();
-                this.links = links;
-            });
-        },
-        intervalRenew() {
-            setInterval(this.renewData, 5000);
-        },
-        sendMessage() {
-            const form = this.$refs.messageForm;
-
-            if (!form.text.value) {
-                alert("Сообщение не должно быть пустым!");
-                return;
-            }
-
-            let data = new FormData(form);
-            fetch(`/admin/adminchat/${this.userId}`, {
-                method: "post",
-                body: data,
-            }).then(async (resp) => {
-                const data = await resp.json();
-                form.reset();
-                this.renewData();
-            });
-        },
+    intervalRenew() {
+      setInterval(this.renewData, 5000);
     },
-    mounted() {
-        const path = document.location.pathname.split("/");
-        this.userId = path[path.length - 1];
+    sendMessage() {
+      const form = this.$refs.messageForm;
+
+      if (!form.text.value) {
+        alert('Сообщение не должно быть пустым!');
+        return;
+      }
+
+      let data = new FormData(form);
+      fetch(`/admin/adminchat/${this.userId}`, {
+        method: 'post',
+        body: data,
+      }).then(async (resp) => {
+        const data = await resp.json();
+        form.reset();
         this.renewData();
-        this.intervalRenew();
+      });
     },
-    template: `
+  },
+  mounted() {
+    const path = document.location.pathname.split('/');
+    this.userId = path[path.length - 1];
+    this.renewData();
+    this.intervalRenew();
+  },
+  template: `
         <div class="chat-history">
             <ul id="messages" class="m-b-0">
                 <li v-for="message in messages" class="clearfix">
@@ -66,8 +66,12 @@ export default {
                         </div>
                         <div class="message my-message">
                             <div>{{ message.text }}</div>
-                            <div v-if="message.file">
-                                <a :href="message.file" target="_blank" download>File: {{ message.file }}</a>                                  
+                            <div v-if="message.files">
+                              <div v-for="file in message.files" >
+                                <a :href="file.path" target="_blank" download>
+                                  {{ file.type }}: {{ file.origin_name }}
+                                </a>                                  
+                              </div>                             
                             </div>
                         </div>                                    
                     </div>                                    
@@ -77,8 +81,12 @@ export default {
                         </div>
                         <div class="message other-message float-right">
                             <div>{{ message.text }}</div>
-                            <div v-if="message.file">
-                                <a :href="message.file" target="_blank" download>File: {{ message.file }}</a>                                  
+                            <div v-if="message.files">
+                              <div v-for="file in message.files" >
+                                <a :href="file.path" target="_blank" download>
+                                  {{ file.type }}: {{ file.origin_name }}
+                                </a>                                  
+                              </div>
                             </div>
                         </div>
                     </div>                                    
@@ -111,7 +119,7 @@ export default {
                         <textarea class="form-control" id="text" name="text" rows="3"></textarea>
                     </div>
                     <div class="col-md-4">
-                        <input type="file" class="form-control" id="file" name="file">
+                        <input type="file" class="form-control" id="file" name="files[]" multiple>
                     </div>
                 </div>
                 <button id="send-message" type="button" class="btn btn-primary mb-2" @click="sendMessage()">

@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use JumasCola\AdminChat\AdminChat;
 use JumasCola\AdminChat\Http\Requests\StoreAdminChatMessageRequest;
+use JumasCola\AdminChat\Http\Resources\AdminChatMessageApiListResource;
+use JumasCola\AdminChat\Http\Resources\ChatResource;
 use JumasCola\AdminChat\Models\AdminChatMessage;
+use JumasCola\AdminChat\Models\AdminChatAttachment;
 
 class AdminChatMessageController extends Controller
 {
@@ -26,7 +29,7 @@ class AdminChatMessageController extends Controller
             ->unread(false)
             ->update(["read_at" => Carbon::now()]);
 
-        return $messages;
+        return AdminChatMessageApiListResource::collection($messages);
     }
 
     public function store(StoreAdminChatMessageRequest $request)
@@ -39,14 +42,33 @@ class AdminChatMessageController extends Controller
             "from_user" => 1,
         ];
 
+        $msg = AdminChatMessage::withoutEvents(function () use ($data) {
+            return AdminChatMessage::create($data);
+        });
+
         File::ensureDirectoryExists(public_path("admin_chat_files"));
-        if ($request->hasFile("file")) {
-            $file = $request->file("file");
-            $data["file"] = Storage::put("public/admin_chat_files", $file);
+        if ($request->hasFile("files")) {
+            foreach ($request->file("files") as $file) {
+                $type = "file";
+                if (
+                    in_array(
+                        $file->extension(),
+                        explode(",", "jpg,bmp,png,jpeg,webp")
+                    )
+                ) {
+                    $type = "image";
+                }
+                AdminChatAttachment::createAndAttach($file, $msg, $type);
+            }
         }
 
-        $message = AdminChatMessage::create($data);
+        $msg = $msg->fresh();
 
-        return $message;
+        event(
+            "eloquent.created: JumasCola\AdminChat\Models\AdminChatMessage",
+            $msg
+        );
+
+        return new ChatResource($msg);
     }
 }

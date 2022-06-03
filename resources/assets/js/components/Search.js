@@ -1,27 +1,27 @@
 export default {
-    data() {
-        return {
-            users: [],
-            search: "",
-        };
+  data() {
+    return {
+      users: [],
+      search: '',
+    };
+  },
+  mounted() {
+    this.handleSearch();
+  },
+  methods: {
+    handleSearch() {
+      fetch(`/admin/adminchat/ajax/search?q=${this.search}`).then(
+        async (resp) => {
+          const data = await resp.json();
+          this.users = data;
+        }
+      );
     },
-    mounted() {
-        this.handleSearch();
+    openChat(id) {
+      window.location.href = `/admin/adminchat/${id}`;
     },
-    methods: {
-        handleSearch() {
-            fetch(`/admin/adminchat/ajax/search?q=${this.search}`).then(
-                async (resp) => {
-                    const data = await resp.json();
-                    this.users = data;
-                }
-            );
-        },
-        openChat(id) {
-            window.location.href = `/admin/adminchat/${id}`;
-        },
-    },
-    template: `
+  },
+  template: `
         <div id="plist" class="people-list">
             <div class="input-group">
                 <input type="text" class="form-control input-group-text" placeholder="Search" v-model="search" @keyup="handleSearch"/>
@@ -38,7 +38,7 @@ export default {
                             <div class="about">
                                 <div class="name">{{ user.name }} {{ user.surname }}</div>
                                 <div class="status">{{ user.email }}</div>                                            
-                                <div class="status"> <i class="fa fa-circle offline"></i> new messages </div>
+                                <div v-if="user.new_messages" class="status"> <i class="fa fa-circle offline"></i> new messages </div>
                             </div>
                     </li>
                 </a>
